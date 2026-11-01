@@ -102,10 +102,9 @@ struct ContentView: View {
     }
 
     /// ゴミ箱に入れてから30日たったタスクは、完全に削除する。
+    /// ゴミ箱の画面の「あと◯日」と同じく日付単位で数え、残りが0日になった日に消す。
     private func purgeOldTrash() {
-        guard let limit = Calendar.current.date(byAdding: .day, value: -TaskItem.trashRetentionDays, to: .now)
-        else { return }
-        for task in allTasks where (task.deletedAt ?? .distantFuture) < limit {
+        for task in allTasks where task.daysUntilPurge == 0 {
             context.delete(task)
         }
     }
