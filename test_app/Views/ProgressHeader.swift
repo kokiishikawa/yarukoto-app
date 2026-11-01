@@ -60,8 +60,7 @@ struct ProgressHeader: View {
                             .padding(.horizontal, 12)
                             .padding(.vertical, 5)
                             .foregroundStyle(period == p ? Color.accentColor : Color.secondary)
-                            .background(period == p ? Color.accentColor.opacity(0.16) : .clear,
-                                        in: .capsule)
+                            .background(period == p ? Color.accentColor.opacity(0.16) : .clear, in: .capsule)
                     }
                     .buttonStyle(.plain)
                 }

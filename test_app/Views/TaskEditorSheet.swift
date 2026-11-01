@@ -44,16 +44,32 @@ struct TaskEditorSheet: View {
                 Section("カテゴリ") {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 8) {
-                            CategoryChip(label: "未分類", symbol: "tray.fill", color: .gray,
-                                         selected: category == nil) { category = nil }
+                            CategoryChip(
+                                label: "未分類",
+                                symbol: "tray.fill",
+                                color: .gray,
+                                selected: category == nil
+                            ) {
+                                category = nil
+                            }
                             ForEach(categories) { c in
-                                CategoryChip(label: c.name, symbol: c.symbol, color: c.tint.color,
-                                             selected: category?.persistentModelID == c.persistentModelID) {
+                                CategoryChip(
+                                    label: c.name,
+                                    symbol: c.symbol,
+                                    color: c.tint.color,
+                                    selected: category?.persistentModelID == c.persistentModelID
+                                ) {
                                     category = c
                                 }
                             }
-                            CategoryChip(label: "追加", symbol: "plus", color: .secondary,
-                                         selected: false) { showNewCategory = true }
+                            CategoryChip(
+                                label: "追加",
+                                symbol: "plus",
+                                color: .secondary,
+                                selected: false
+                            ) {
+                                showNewCategory = true
+                            }
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 8)
@@ -136,9 +152,13 @@ struct TaskEditorSheet: View {
     private func save() {
         let trimmed = title.trimmingCharacters(in: .whitespaces)
         // 期限なしなら nil。日付だけならその日の 0:00。
-        let due: Date? = if !hasDue { nil }
-            else if hasTime { dueDate }
-            else { Calendar.current.startOfDay(for: dueDate) }
+        let due: Date? = if !hasDue {
+            nil
+        } else if hasTime {
+            dueDate
+        } else {
+            Calendar.current.startOfDay(for: dueDate)
+        }
         let dueHasTime = hasDue && hasTime
         // 繰り返しは期限があるときだけ
         let repeats: RepeatDays = hasDue ? repeatDays : []

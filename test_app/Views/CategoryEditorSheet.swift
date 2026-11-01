@@ -64,8 +64,7 @@ struct CategoryEditorSheet: View {
                                     .font(.title3)
                                     .foregroundStyle(symbol == s ? .white : tint.color)
                                     .frame(width: 44, height: 44)
-                                    .background(symbol == s ? tint.color : tint.color.opacity(0.12),
-                                                in: .circle)
+                                    .background(symbol == s ? tint.color : tint.color.opacity(0.12), in: .circle)
                             }
                             .buttonStyle(.borderless)
                         }

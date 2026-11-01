@@ -30,13 +30,22 @@ enum PreviewData {
         let workout = TaskItem(title: "筋トレ", category: health, dueDate: Calendar.current.startOfDay(for: now))
         workout.repeatDays = .weekdays
         let samples = [
-            TaskItem(title: "企画書を仕上げる", note: "金曜までに共有", priority: .high,
-                     category: work, dueDate: now.addingTimeInterval(60 * 60 * 5), hasDueTime: true),
-            TaskItem(title: "Swift の本を読む", category: study,
-                     dueDate: now.addingTimeInterval(60 * 60 * 30)),
+            TaskItem(
+                title: "企画書を仕上げる",
+                note: "金曜までに共有",
+                priority: .high,
+                category: work,
+                dueDate: now.addingTimeInterval(60 * 60 * 5),
+                hasDueTime: true
+            ),
+            TaskItem(title: "Swift の本を読む", category: study, dueDate: now.addingTimeInterval(60 * 60 * 30)),
             TaskItem(title: "ジョギング 30分", priority: .low, category: health),
-            TaskItem(title: "請求書を送る", priority: .high, category: work,
-                     dueDate: now.addingTimeInterval(-60 * 60 * 2)),
+            TaskItem(
+                title: "請求書を送る",
+                priority: .high,
+                category: work,
+                dueDate: now.addingTimeInterval(-60 * 60 * 2)
+            ),
             workout,
             done,
             archived,

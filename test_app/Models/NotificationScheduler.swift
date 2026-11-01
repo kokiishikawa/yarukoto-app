@@ -82,8 +82,7 @@ enum NotificationScheduler {
 
         for offset in 0..<daysAhead {
             guard let day = calendar.date(byAdding: .day, value: offset, to: today),
-                  let fire = calendar.date(bySettingHour: minutes / 60, minute: minutes % 60,
-                                           second: 0, of: day),
+                  let fire = calendar.date(bySettingHour: minutes / 60, minute: minutes % 60, second: 0, of: day),
                   fire > now,
                   let text = summary(for: day, tasks: tasks, calendar: calendar)
             else { continue }

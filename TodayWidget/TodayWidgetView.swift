@@ -84,10 +84,12 @@ struct TodayWidgetView: View {
 
             if s.remaining.isEmpty {
                 Spacer(minLength: 0)
-                Label(s.total == 0 ? "期限のタスクはありません" : "すべて完了！",
-                      systemImage: "checkmark.circle")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                Label(
+                    s.total == 0 ? "期限のタスクはありません" : "すべて完了！",
+                    systemImage: "checkmark.circle"
+                )
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
                 Spacer(minLength: 0)
             } else {
                 ForEach(Array(s.remaining.prefix(limit).enumerated()), id: \.offset) { _, item in

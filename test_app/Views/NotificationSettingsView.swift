@@ -34,8 +34,7 @@ struct NotificationSettingsView: View {
     private var timeBinding: Binding<Date> {
         Binding(
             get: {
-                Calendar.current.date(bySettingHour: minutes / 60, minute: minutes % 60,
-                                      second: 0, of: .now) ?? .now
+                Calendar.current.date(bySettingHour: minutes / 60, minute: minutes % 60, second: 0, of: .now) ?? .now
             },
             set: {
                 let c = Calendar.current.dateComponents([.hour, .minute], from: $0)

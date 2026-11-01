@@ -80,10 +80,15 @@ final class TaskItem {
     var dueLabel: String? {
         guard let dueDate else { return nil }
         let cal = Calendar.current
-        let day = if cal.isDateInToday(dueDate) { "今日" }
-            else if cal.isDateInTomorrow(dueDate) { "明日" }
-            else if cal.isDateInYesterday(dueDate) { "昨日" }
-            else { dueDate.formatted(.dateTime.month().day()) }
+        let day = if cal.isDateInToday(dueDate) {
+            "今日"
+        } else if cal.isDateInTomorrow(dueDate) {
+            "明日"
+        } else if cal.isDateInYesterday(dueDate) {
+            "昨日"
+        } else {
+            dueDate.formatted(.dateTime.month().day())
+        }
         return hasDueTime ? "\(day) \(dueDate.formatted(.dateTime.hour().minute()))" : day
     }
 
@@ -94,8 +99,9 @@ final class TaskItem {
     var daysUntilPurge: Int? {
         guard let deletedAt else { return nil }
         let cal = Calendar.current
-        let elapsed = cal.dateComponents([.day], from: cal.startOfDay(for: deletedAt),
-                                         to: cal.startOfDay(for: .now)).day ?? 0
+        let from = cal.startOfDay(for: deletedAt)
+        let to = cal.startOfDay(for: .now)
+        let elapsed = cal.dateComponents([.day], from: from, to: to).day ?? 0
         return max(Self.trashRetentionDays - elapsed, 0)
     }
 
@@ -146,10 +152,17 @@ final class TaskItem {
     /// 繰り返すタスクを完了したら、次の回を1つ作る。
     private func addNextOccurrence() {
         guard let modelContext, let completedAt,
-              let next = nextDueDate(completedAt: completedAt) else { return }
+              let next = nextDueDate(completedAt: completedAt)
+        else { return }
         if seriesID == nil { seriesID = UUID() }
-        let copy = TaskItem(title: title, note: note, priority: priority, category: taskCategory,
-                            dueDate: next, hasDueTime: hasDueTime)
+        let copy = TaskItem(
+            title: title,
+            note: note,
+            priority: priority,
+            category: taskCategory,
+            dueDate: next,
+            hasDueTime: hasDueTime
+        )
         copy.repeatMask = repeatMask
         copy.seriesID = seriesID
         modelContext.insert(copy)

@@ -16,6 +16,8 @@ enum TaskFilter: String, CaseIterable, Identifiable {
 
 struct ContentView: View {
     @Environment(\.modelContext) private var context
+    @Environment(\.scenePhase) private var scenePhase
+
     @Query(sort: [SortDescriptor(\TaskItem.createdAt, order: .reverse)])
     private var allTasks: [TaskItem]
     @Query(sort: [SortDescriptor(\TaskCategory.sortOrder), SortDescriptor(\TaskCategory.createdAt)])
@@ -24,7 +26,6 @@ struct ContentView: View {
     @AppStorage("didSeedCategories") private var didSeedCategories = false
     @AppStorage("morningNotifyEnabled") private var notifyEnabled = false
     @AppStorage("morningNotifyMinutes") private var notifyMinutes = 8 * 60
-    @Environment(\.scenePhase) private var scenePhase
     @AppStorage("progressPeriod") private var period: ProgressPeriod = .today
 
     @State private var filter: TaskFilter = .all
@@ -49,7 +50,9 @@ struct ContentView: View {
     }
 
     /// 一覧に出すのはアーカイブしていないタスクだけ。
-    private var tasks: [TaskItem] { allTasks.filter { !$0.isArchived && $0.deletedAt == nil } }
+    private var tasks: [TaskItem] {
+        allTasks.filter { !$0.isArchived && $0.deletedAt == nil }
+    }
 
     /// 進捗はアーカイブ済みも含め、期限が指定の期間に入るタスクで集計する。
     private func stats(for period: ProgressPeriod) -> (done: Int, total: Int) {
@@ -152,8 +155,8 @@ struct ContentView: View {
             List {
                 Section {
                     ProgressHeader(period: $period, stats: stats(for:))
-                    .listRowInsets(.init())
-                    .listRowBackground(Color.clear)
+                        .listRowInsets(.init())
+                        .listRowBackground(Color.clear)
                 }
 
                 Section {
@@ -168,6 +171,7 @@ struct ContentView: View {
                         .listRowInsets(.init())
                         .listRowBackground(Color.clear)
                 }
+
                 Section {
                     if visibleTasks.isEmpty {
                         emptyState
@@ -180,8 +184,10 @@ struct ContentView: View {
                             .onTapGesture { editorTarget = .edit(task) }
                             .contextMenu {
                                 Button("編集", systemImage: "pencil") { editorTarget = .edit(task) }
-                                Button(task.isDone ? "未完了に戻す" : "完了にする",
-                                       systemImage: task.isDone ? "arrow.uturn.backward" : "checkmark") {
+                                Button(
+                                    task.isDone ? "未完了に戻す" : "完了にする",
+                                    systemImage: task.isDone ? "arrow.uturn.backward" : "checkmark"
+                                ) {
                                     withAnimation(.snappy) { task.toggle() }
                                 }
                                 if task.isDone {
@@ -199,8 +205,10 @@ struct ContentView: View {
                                 Button {
                                     withAnimation(.snappy) { task.toggle() }
                                 } label: {
-                                    Label(task.isDone ? "未完了に戻す" : "完了",
-                                          systemImage: task.isDone ? "arrow.uturn.backward" : "checkmark")
+                                    Label(
+                                        task.isDone ? "未完了に戻す" : "完了",
+                                        systemImage: task.isDone ? "arrow.uturn.backward" : "checkmark"
+                                    )
                                 }
                                 .tint(.green)
                             }
@@ -293,14 +301,23 @@ struct ContentView: View {
     private var categoryChips: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
-                chip(label: "すべて", symbol: "square.grid.2x2", color: .accentColor,
-                     selected: selectedCategoryID == nil) {
+                chip(
+                    label: "すべて",
+                    symbol: "square.grid.2x2",
+                    color: .accentColor,
+                    selected: selectedCategoryID == nil
+                ) {
                     selectedCategoryID = nil
                 }
                 ForEach(categories) { c in
-                    chip(label: c.name, symbol: c.symbol, color: c.tint.color,
-                         selected: selectedCategoryID == c.persistentModelID) {
-                        selectedCategoryID = (selectedCategoryID == c.persistentModelID) ? nil : c.persistentModelID
+                    let isSelected = selectedCategoryID == c.persistentModelID
+                    chip(
+                        label: c.name,
+                        symbol: c.symbol,
+                        color: c.tint.color,
+                        selected: isSelected
+                    ) {
+                        selectedCategoryID = isSelected ? nil : c.persistentModelID
                     }
                 }
                 chip(label: "追加", symbol: "plus", color: .secondary, selected: false) {
@@ -312,8 +329,13 @@ struct ContentView: View {
         .scrollClipDisabled()
     }
 
-    private func chip(label: String, symbol: String, color: Color, selected: Bool,
-                      action: @escaping () -> Void) -> some View {
+    private func chip(
+        label: String,
+        symbol: String,
+        color: Color,
+        selected: Bool,
+        action: @escaping () -> Void
+    ) -> some View {
         CategoryChip(label: label, symbol: symbol, color: color, selected: selected, action: action)
     }
 

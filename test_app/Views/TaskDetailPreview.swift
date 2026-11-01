@@ -54,8 +54,12 @@ struct TaskDetailPreview: View {
         .frame(width: 320, alignment: .leading)
     }
 
-    private func row<Value: View>(_ title: String, systemImage: String, tint: Color,
-                                  @ViewBuilder value: () -> Value) -> some View {
+    private func row<Value: View>(
+        _ title: String,
+        systemImage: String,
+        tint: Color,
+        @ViewBuilder value: () -> Value
+    ) -> some View {
         HStack(spacing: 10) {
             Label(title, systemImage: systemImage)
                 .foregroundStyle(tint)

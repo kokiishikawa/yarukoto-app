@@ -50,8 +50,11 @@ struct CategoryManagerView: View {
             }
             .overlay {
                 if categories.isEmpty {
-                    ContentUnavailableView("カテゴリがありません", systemImage: "folder.badge.plus",
-                                           description: Text("右上の + から追加できます。"))
+                    ContentUnavailableView(
+                        "カテゴリがありません",
+                        systemImage: "folder.badge.plus",
+                        description: Text("右上の + から追加できます。")
+                    )
                 }
             }
             .navigationTitle("カテゴリ")

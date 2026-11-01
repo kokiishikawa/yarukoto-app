@@ -44,7 +44,7 @@ struct TaskRow: View {
 
                     if let due = task.dueLabel {
                         Label(due, systemImage: "calendar")
-                        .foregroundStyle(task.isOverdue ? .red : .secondary)
+                            .foregroundStyle(task.isOverdue ? .red : .secondary)
                     }
 
                     if !task.repeatDays.isEmpty {
