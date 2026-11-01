@@ -48,6 +48,8 @@ final class TaskItem {
     var repeatMask: Int = 0
     /// 同じ繰り返しから作られたタスクに共通の印。最初に次の回を作るときに付ける。
     var seriesID: UUID?
+    /// 完了して次の回を作ったときの、その回の期限。完了を取り消したとき、消す回を探すのに使う。
+    var nextOccurrenceDueDate: Date?
 
     init(
         title: String,
@@ -144,8 +146,8 @@ final class TaskItem {
         completedAt = isDone ? .now : nil
         if isDone {
             addNextOccurrence()
-        } else if let previousCompletion {
-            removeNextOccurrence(completedAt: previousCompletion)
+        } else {
+            removeNextOccurrence(previousCompletion: previousCompletion)
         }
     }
 
@@ -166,12 +168,17 @@ final class TaskItem {
         copy.repeatMask = repeatMask
         copy.seriesID = seriesID
         modelContext.insert(copy)
+        nextOccurrenceDueDate = next
     }
 
     /// 完了を取り消したら、そのとき作った次の回（まだ完了していないもの）を消す。
-    private func removeNextOccurrence(completedAt: Date) {
-        guard let modelContext, let seriesID,
-              let next = nextDueDate(completedAt: completedAt),
+    /// 次の回の期限は、作ったときに覚えておいたものを使う。完了したあとで期限や曜日を編集しても見つけられるようにするため。
+    private func removeNextOccurrence(previousCompletion: Date?) {
+        defer { nextOccurrenceDueDate = nil }
+        // この仕組みを入れる前に完了したタスクは期限を覚えていないので、計算し直す
+        let remembered = nextOccurrenceDueDate
+            ?? previousCompletion.flatMap { nextDueDate(completedAt: $0) }
+        guard let modelContext, let seriesID, let next = remembered,
               let all = try? modelContext.fetch(FetchDescriptor<TaskItem>())
         else { return }
         let spawned = all.first {
