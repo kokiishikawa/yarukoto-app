@@ -36,6 +36,8 @@ struct ContentView: View {
     @State private var showArchive = false
     @State private var showTrash = false
     @State private var showNotificationSettings = false
+    /// 今日の日付。日付が変わったら更新して一覧を作り直し、「今日」「明日」や期限切れの表示、進捗を新しい日付に合わせる。
+    @State private var today = Calendar.current.startOfDay(for: .now)
 
     private enum EditorTarget: Identifiable {
         case new
@@ -93,6 +95,8 @@ struct ContentView: View {
 
     /// 起動時・アプリに戻ったとき・日付が変わったときの片付け。
     private func tidyUp() {
+        let now = Calendar.current.startOfDay(for: .now)
+        if now != today { today = now }
         archiveFinishedTasks()
         purgeOldTrash()
     }
@@ -236,6 +240,8 @@ struct ContentView: View {
                 }
             }
             .listStyle(.insetGrouped)
+            // 日付が変わったら一覧を作り直す。行の表示（TaskRow）は、タスクが変わらないと描き直されないため
+            .id(today)
             .animation(.smooth, value: visibleTasks.map(\.persistentModelID))
             .navigationTitle("タスク")
             .searchable(text: $searchText, prompt: "タスクを検索")
